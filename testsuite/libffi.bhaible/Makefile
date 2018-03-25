@@ -1,9 +1,9 @@
 CC = gcc
 CFLAGS = -O2 -Wall
-prefix =
+prefix = /usr
 includedir = $(prefix)/include
 libdir = $(prefix)/lib
-CPPFLAGS = -I$(includedir)
+CPPFLAGS = -I$(includedir) $(CPUFLAGS)
 LDFLAGS = -L$(libdir) -Wl,-rpath,$(libdir)
 
 all: check-call check-callback
