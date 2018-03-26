@@ -19,6 +19,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj			\
 	m4/libtool.m4 m4/lt~obsolete.m4					\
 	 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4			\
 	 m4/ltversion.m4 src/debug.c msvcc.sh				\
+        m4/libffi.m4 m4/mmap.m4                                         \
 	generate-darwin-source-and-headers.py				\
 	libffi.xcodeproj/project.pbxproj				\
 	libtool-ldflags libtool-version configure.host README.md        \
