@@ -137,6 +137,7 @@ case "${host}" in
 
   m68k-*-*)
 	TARGET=M68K; TARGETDIR=m68k
+	HAVE_LONG_DOUBLE='!defined(__mcoldfire__)'
 	SOURCES="ffi.c sysv.S"
 	;;
 
