@@ -20,6 +20,7 @@ void rtems_cache_flush_multiple_data_lines( const void *, size_t );
 #include <asm/cachectl.h>
 #endif
 #endif
+#include "cifflags.h"
 
 void ffi_call_SYSV (extended_cif *,
 		    unsigned, unsigned,
@@ -45,7 +46,7 @@ ffi_prep_args (void *stack, extended_cif *ecif)
   argp = stack;
 
   if (
-#ifdef __MINT__
+#if !defined(__HAVE_68881__) && FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
       (ecif->cif->rtype->type == FFI_TYPE_LONGDOUBLE) ||
 #endif
       (((ecif->cif->rtype->type == FFI_TYPE_STRUCT)
@@ -115,16 +116,16 @@ ffi_prep_args (void *stack, extended_cif *ecif)
   return struct_value_ptr;
 }
 
-#define CIF_FLAGS_INT		1
-#define CIF_FLAGS_DINT		2
-#define CIF_FLAGS_FLOAT		4
-#define CIF_FLAGS_DOUBLE	8
-#define CIF_FLAGS_LDOUBLE	16
-#define CIF_FLAGS_POINTER	32
-#define CIF_FLAGS_STRUCT1	64
-#define CIF_FLAGS_STRUCT2	128
-#define CIF_FLAGS_SINT8		256
-#define CIF_FLAGS_SINT16	512
+#define CIF_FLAGS_INT       (1 << CIF_BIT_INT)
+#define CIF_FLAGS_DINT      (1 << CIF_BIT_DINT)
+#define CIF_FLAGS_FLOAT     (1 << CIF_BIT_FLOAT)
+#define CIF_FLAGS_DOUBLE    (1 << CIF_BIT_DOUBLE)
+#define CIF_FLAGS_LDOUBLE   (1 << CIF_BIT_LDOUBLE)
+#define CIF_FLAGS_POINTER   (1 << CIF_BIT_POINTER)
+#define CIF_FLAGS_STRUCT1   (1 << CIF_BIT_STRUCT1)
+#define CIF_FLAGS_STRUCT2   (1 << CIF_BIT_STRUCT2)
+#define CIF_FLAGS_SINT8     (1 << CIF_BIT_SINT8)
+#define CIF_FLAGS_SINT16    (1 << CIF_BIT_SINT16)
 
 /* Perform machine dependent cif processing */
 ffi_status
@@ -230,7 +231,11 @@ ffi_call (ffi_cif *cif, void (*fn) (), void *rvalue, void **avalue)
      address then we need to make one.  */
 
   if (rvalue == NULL
-      && cif->rtype->type == FFI_TYPE_STRUCT
+      && (cif->rtype->type == FFI_TYPE_STRUCT
+#if !defined(__HAVE_68881__) && FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
+      || cif->rtype->type == FFI_TYPE_LONGDOUBLE
+#endif
+      )
       && cif->rtype->size > 8)
     ecif.rvalue = alloca (cif->rtype->size);
   else
@@ -270,9 +275,9 @@ ffi_prep_incoming_args_SYSV (char *stack, void **avalue, ffi_cif *cif)
           cif->rtype->type == FFI_TYPE_STRUCT &&
           (z == 1 || z == 2))
  	{
-	  *p_argv = (void *) (argp + 2);
+	  *p_argv = (void *) (argp + (sizeof(int) - 2));
 
-	  z = 4;
+	  z = sizeof(int);
 	}
       else
       if (cif->flags &&
@@ -336,7 +341,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
   *(unsigned short *)(closure->tramp + 6) = 0x4ef9;
 
   if (
-#ifdef __MINT__
+#if !defined(__HAVE_68881__) && FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
       (cif->rtype->type == FFI_TYPE_LONGDOUBLE) ||
 #endif
       (((cif->rtype->type == FFI_TYPE_STRUCT)

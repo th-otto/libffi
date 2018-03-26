@@ -1,0 +1,10 @@
+#define CIF_BIT_INT         0
+#define CIF_BIT_DINT        1
+#define CIF_BIT_FLOAT       2
+#define CIF_BIT_DOUBLE      3
+#define CIF_BIT_LDOUBLE     4
+#define CIF_BIT_POINTER     5
+#define CIF_BIT_STRUCT1     6
+#define CIF_BIT_STRUCT2     7
+#define CIF_BIT_SINT8       8
+#define CIF_BIT_SINT16      9

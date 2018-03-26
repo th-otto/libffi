@@ -31,6 +31,7 @@
 #define LIBFFI_ASM	
 #include <fficonfig.h>
 #include <ffi.h>
+#include "cifflags.h"
 
 #ifdef HAVE_AS_CFI_PSEUDO_OP
 #define CFI_STARTPROC()		.cfi_startproc
@@ -44,7 +45,7 @@
 #define CFI_ENDPROC()
 #endif
 
-#ifdef __MINT__
+#ifndef __ELF__
 #define CALLFUNC(funcname) _ ## funcname
 #else
 #define CALLFUNC(funcname) funcname
@@ -115,20 +116,20 @@ CALLFUNC(ffi_call_SYSV):
 #endif
 	jbeq	noretval
 
-	btst	#0,%d2
+	btst	#CIF_BIT_INT,%d2
 	jbeq	retlongint
 	move.l	%d0,(%a1)
 	jbra	epilogue
 
 retlongint:
-	btst	#1,%d2
+	btst	#CIF_BIT_DINT,%d2
 	jbeq	retfloat
 	move.l	%d0,(%a1)
 	move.l	%d1,4(%a1)
 	jbra	epilogue
 
 retfloat:
-	btst	#2,%d2
+	btst	#CIF_BIT_FLOAT,%d2
 	jbeq	retdouble
 #if defined(__HAVE_68881__) && !defined(__MINT__)
 	fmove.s	%fp0,(%a1)
@@ -138,7 +139,7 @@ retfloat:
 	jbra	epilogue
 
 retdouble:
-	btst	#3,%d2
+	btst	#CIF_BIT_DOUBLE,%d2
 	jbeq	retlongdouble
 #if defined(__HAVE_68881__) && !defined(__MINT__)
 	fmove.d	%fp0,(%a1)
@@ -149,19 +150,20 @@ retdouble:
 	jbra	epilogue
 
 retlongdouble:
-	btst	#4,%d2
+	btst	#CIF_BIT_LDOUBLE,%d2
 	jbeq	retpointer
 #if defined(__HAVE_68881__) && !defined(__MINT__)
 	fmove.x	%fp0,(%a1)
-#else
+#elif defined(__mcoldfire__)
 	move.l	%d0,(%a1)+
-	move.l	%d1,(%a1)+
-	move.l	%d2,(%a1)
+	move.l	%d1,(%a1)
+#else
+	/* otherwise handled like a struct */
 #endif
 	jbra	epilogue
 
 retpointer:
-	btst	#5,%d2
+	btst	#CIF_BIT_POINTER,%d2
 	jbeq	retstruct1
 #ifdef __MINT__
 	move.l	%d0,(%a1)
@@ -171,19 +173,19 @@ retpointer:
 	jbra	epilogue
 
 retstruct1:
-	btst	#6,%d2
+	btst	#CIF_BIT_STRUCT1,%d2
 	jbeq	retstruct2
 	move.b	%d0,(%a1)
 	jbra	epilogue
 
 retstruct2:
-	btst	#7,%d2
+	btst	#CIF_BIT_STRUCT2,%d2
 	jbeq	retsint8
 	move.w	%d0,(%a1)
 	jbra	epilogue
 
 retsint8:
-	btst	#8,%d2
+	btst	#CIF_BIT_SINT8,%d2
 	jbeq	retsint16
 	| NOTE: On the mc68000, extb is not supported. 8->16, then 16->32.
 #if !defined(__mc68020__) && !defined(__mc68030__) && !defined(__mc68040__) && !defined(__mc68060__) && !defined(__mcoldfire__)
@@ -196,7 +198,7 @@ retsint8:
 	jbra	epilogue
 
 retsint16:
-	btst	#9,%d2
+	btst	#CIF_BIT_SINT16,%d2
 	jbeq	noretval
 	ext.l	%d0
 	move.l	%d0,(%a1)
@@ -277,10 +279,11 @@ CALLFUNC(ffi_closure_SYSV):
 .Lcls_ret_ldouble:
 #if defined(__HAVE_68881__) && !defined(__MINT__)
 	fmove.x	(%a0),%fp0
-#else
+#elif defined(__mcoldfire__)
 	move.l	(%a0)+,%d0
 	move.l	(%a0)+,%d1
-	move.l	(%a0),%d2
+#else
+	/* otherwise handled like a struct; should not get here */
 #endif
 	jra	.Lcls_epilogue
 1:
