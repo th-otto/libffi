@@ -75,6 +75,8 @@ float f1=0.1, f2=0.2, f3=0.3, f4=0.4, f5=0.5, f6=0.6, f7=0.7, f8=0.8, f9=0.9,
       f18=1.9, f19=2.1, f20=2.2, f21=2.3, f22=2.4, f23=2.5, f24=2.6;
 double d1=0.1, d2=0.2, d3=0.3, d4=0.4, d5=0.5, d6=0.6, d7=0.7, d8=0.8, d9=0.9,
        d10=1.1, d11=1.2, d12=1.3, d13=1.4, d14=1.5, d15=1.6, d16=1.7, d17=1.8;
+long double x1=0.1, x2=0.2, x3=0.3, x4=0.4, x5=0.5, x6=0.6, x7=0.7, x8=0.8, x9=0.9,
+       x10=1.1, x11=1.2, x12=1.3, x13=1.4, x14=1.5, x15=1.6, x16=1.7, x17=1.8;
 
 uchar uc1='a', uc2=127, uc3=128, uc4=255, uc5=(uchar)-1;
 ushort us1=1, us2=2, us3=3, us4=4, us5=5, us6=6, us7=7, us8=8, us9=9;
@@ -242,6 +244,46 @@ double d_d16 (double a, double b, double c, double d, double e, double f,
 {
   double r=a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p;
   fprintf(out,"double f(16*double):(%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g)",a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p);
+  fflush(out);
+  return r;
+}
+
+/* long double tests */
+long double x_x (long double a)
+{
+  long double r=a+1.0;
+  fprintf(out,"long double f(long double):(%Lg)",a);
+  fflush(out);
+  return r;
+}
+long double x_x2 (long double a, long double b)
+{
+  long double r=a+b;
+  fprintf(out,"long double f(2*long double):(%Lg,%Lg)",a,b);
+  fflush(out);
+  return r;
+}
+long double x_x4 (long double a, long double b, long double c, long double d)
+{
+  long double r=a+b+c+d;
+  fprintf(out,"long double f(4*long double):(%Lg,%Lg,%Lg,%Lg)",a,b,c,d);
+  fflush(out);
+  return r;
+}
+long double x_x8 (long double a, long double b, long double c, long double d, long double e, long double f,
+             long double g, long double h)
+{
+  long double r=a+b+c+d+e+f+g+h;
+  fprintf(out,"long double f(8*long double):(%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg)",a,b,c,d,e,f,g,h);
+  fflush(out);
+  return r;
+}
+long double x_x16 (long double a, long double b, long double c, long double d, long double e, long double f,
+              long double g, long double h, long double i, long double j, long double k, long double l,
+              long double m, long double n, long double o, long double p)
+{
+  long double r=a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p;
+  fprintf(out,"long double f(16*long double):(%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg)",a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p);
   fflush(out);
   return r;
 }
@@ -434,6 +476,69 @@ double d_d13i (double a, double b, double c, double d, double e, double f,
 {
   double r = a+b+c+d+e+f+g+h+i+j+k+l+m+z;
   fprintf(out,"double f(13*double,int):(%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%d)",a,b,c,d,e,f,g,h,i,j,k,l,m,z);
+  fflush(out);
+  return r;
+}
+
+long double x_xi (long double a, int z)
+{
+  long double r = a+z;
+  fprintf(out,"long double f(long double,int):(%Lg,%d)",a,z);
+  fflush(out);
+  return r;
+}
+long double x_x2i (long double a, long double b, int z)
+{
+  long double r = a+b+z;
+  fprintf(out,"long double f(2*long double,int):(%Lg,%Lg,%d)",a,b,z);
+  fflush(out);
+  return r;
+}
+long double x_x3i (long double a, long double b, long double c, int z)
+{
+  long double r = a+b+c+z;
+  fprintf(out,"long double f(3*long double,int):(%Lg,%Lg,%Lg,%d)",a,b,c,z);
+  fflush(out);
+  return r;
+}
+long double x_x4i (long double a, long double b, long double c, long double d, int z)
+{
+  long double r = a+b+c+d+z;
+  fprintf(out,"long double f(4*long double,int):(%Lg,%Lg,%Lg,%Lg,%d)",a,b,c,d,z);
+  fflush(out);
+  return r;
+}
+long double x_x7i (long double a, long double b, long double c, long double d, long double e, long double f,
+              long double g, int z)
+{
+  long double r = a+b+c+d+e+f+g+z;
+  fprintf(out,"long double f(7*long double,int):(%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%d)",a,b,c,d,e,f,g,z);
+  fflush(out);
+  return r;
+}
+long double x_x8i (long double a, long double b, long double c, long double d, long double e, long double f,
+              long double g, long double h, int z)
+{
+  long double r = a+b+c+d+e+f+g+h+z;
+  fprintf(out,"long double f(8*long double,int):(%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%d)",a,b,c,d,e,f,g,h,z);
+  fflush(out);
+  return r;
+}
+long double x_x12i (long double a, long double b, long double c, long double d, long double e, long double f,
+               long double g, long double h, long double i, long double j, long double k, long double l,
+               int z)
+{
+  long double r = a+b+c+d+e+f+g+h+i+j+k+l+z;
+  fprintf(out,"long double f(12*long double,int):(%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%d)",a,b,c,d,e,f,g,h,i,j,k,l,z);
+  fflush(out);
+  return r;
+}
+long double x_x13i (long double a, long double b, long double c, long double d, long double e, long double f,
+               long double g, long double h, long double i, long double j, long double k, long double l,
+               long double m, int z)
+{
+  long double r = a+b+c+d+e+f+g+h+i+j+k+l+m+z;
+  fprintf(out,"long double f(13*long double,int):(%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%Lg,%d)",a,b,c,d,e,f,g,h,i,j,k,l,m,z);
   fflush(out);
   return r;
 }

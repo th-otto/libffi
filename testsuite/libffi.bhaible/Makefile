@@ -1,18 +1,19 @@
 CC = gcc
 CFLAGS = -O2 -Wall
-prefix = /usr
+HOST=$(shell ../../config.guess)
+prefix = ../../$(HOST)
 includedir = $(prefix)/include
-libdir = $(prefix)/lib
-CPPFLAGS = -I$(includedir) $(CPUFLAGS)
-LDFLAGS = -L$(libdir) -Wl,-rpath,$(libdir)
+CPPFLAGS = -I$(includedir)
+CPPFLAGS += $(CPUFLAGS)
+LIBFFI = ../../$(HOST)/.libs/libffi.a
 
 all: check-call check-callback
 
-test-call: test-call.c testcases.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o test-call test-call.c -lffi
+test-call: test-call.c testcases.c $(LIBFFI)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o test-call test-call.c $(LIBFFI)
 
-test-callback: test-callback.c testcases.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o test-callback test-callback.c -lffi
+test-callback: test-callback.c testcases.c $(LIBFFI)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o test-callback test-callback.c $(LIBFFI)
 
 check-call: test-call
 	./test-call > test-call.out

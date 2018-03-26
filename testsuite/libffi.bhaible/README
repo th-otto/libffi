@@ -3,7 +3,7 @@ This package contains a test suite for libffi.
 This test suite can be compiled with a C compiler. No need for 'expect'
 or some other package that is often not installed.
 
-The test suite consists of 81 C functions, each with a different signature.
+The test suite consists of 95 C functions, each with a different signature.
 * test-call verifies that calling each function directly produces the same
   results as calling the function indirectly through 'ffi_call'.
 * test-callback verifies that calling each function directly produces the same
